@@ -3,17 +3,25 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, JWTManager, jwt_required
 
 
+class Pet:
+    def __init__(self, breed, age, color, weight):
+        self.breed = breed
+        self.age = age
+        self.color = color
+        self.weight = weight
+
+
 def populate_pet_list():
     pet_list.append(Pet("Jack Russell", 4, "white", 12.4).__dict__)
     pet_list.append(Pet("Dalmata", 6, "white", 15.6).__dict__)
     pet_list.append(Pet("Pitbull", 9, "brown", 18.3).__dict__)
 
 
+pet_list = list()
+populate_pet_list()
 server = Flask(__name__)
 server.config["JWT_SECRET_KEY"] = "my secret key"
 server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
-pet_list = list()
-populate_pet_list()
 jwt = JWTManager(server)
 
 
@@ -41,14 +49,6 @@ def login():
 
     token = create_access_token(identity=username)
     return jsonify(bearer_token=token), 200
-
-
-class Pet:
-    def __init__(self, breed, age, color, weight):
-        self.breed = breed
-        self.age = age
-        self.color = color
-        self.weight = weight
 
 
 def pets_post():
