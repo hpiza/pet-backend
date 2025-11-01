@@ -1,1 +1,2 @@
 setuptools==80.9.0
+Flask==2.3.3  # Or your desired Flask version
