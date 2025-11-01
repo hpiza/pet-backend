@@ -1,2 +1,3 @@
 setuptools==80.9.0
-Flask==2.3.3  # Or your desired Flask version
+Flask==2.3.3
+flask_jwt_extended=4.7.1
