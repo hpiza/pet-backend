@@ -3,10 +3,17 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, JWTManager, jwt_required
 
 
-server = Flask("smart-guide")
+def populate_pet_list():
+    pet_list.append(Pet("Jack Russell", 4, "white", 12.4).__dict__)
+    pet_list.append(Pet("Dalmata", 6, "white", 15.6).__dict__)
+    pet_list.append(Pet("Pitbull", 9, "brown", 18.3).__dict__)
+
+
+server = Flask(__name__)
 server.config["JWT_SECRET_KEY"] = "my secret key"
 server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
 pet_list = list()
+populate_pet_list()
 jwt = JWTManager(server)
 
 
@@ -17,6 +24,11 @@ def welcome():
 
 def user_valid(username, password):
     return username == "admin" and password == "hello123"
+
+
+@server.route('/')
+def hello_world():
+    return 'Welcome to the Pet web service!'
 
 
 @server.route("/login", methods=['POST'])
@@ -68,14 +80,3 @@ def pets():
         return pets_get()
     else:
         return pets_post()
-
-
-def populate_pet_list():
-    pet_list.append(Pet("Jack Russell", 4, "white", 12.4).__dict__)
-    pet_list.append(Pet("Dalmata", 6, "white", 15.6).__dict__)
-    pet_list.append(Pet("Pitbull", 9, "brown", 18.3).__dict__)
-
-
-if __name__ == '__main__':
-    populate_pet_list()
-    server.run(debug=False, port=1234)
