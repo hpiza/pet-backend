@@ -77,5 +77,5 @@ if __name__ == "__main__":
     populate_pet_list()
     server.config["JWT_SECRET_KEY"] = "my secret key"
     server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
-    server.run(host='localhost', debug=True)
+    server.run(host='localhost', port=5000, debug=True)
     jwt = JWTManager(server)
