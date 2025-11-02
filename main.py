@@ -21,14 +21,6 @@ def populate_pet_list():
     pet_list.append(Pet("Pitbull", 9, "brown", 18.3).__dict__)
 
 
-if __name__ == "__main__":
-    populate_pet_list()
-    server.config["JWT_SECRET_KEY"] = "my secret key"
-    server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
-    jwt = JWTManager(server)
-    server.run(host='0.0.0.0', debug=True)
-
-
 def user_valid(username, password):
     return username == "admin" and password == "hello123"
 
@@ -79,3 +71,11 @@ def pets():
         return pets_get()
     else:
         return pets_post()
+
+
+if __name__ == "__main__":
+    populate_pet_list()
+    server.config["JWT_SECRET_KEY"] = "my secret key"
+    server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
+    server.run(host='localhost', debug=True)
+    jwt = JWTManager(server)
