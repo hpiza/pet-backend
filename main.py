@@ -3,6 +3,10 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, JWTManager, jwt_required
 
 
+server = Flask(__name__)
+pet_list = list()
+
+
 class Pet:
     def __init__(self, breed, age, color, weight):
         self.breed = breed
@@ -17,21 +21,34 @@ def populate_pet_list():
     pet_list.append(Pet("Pitbull", 9, "brown", 18.3).__dict__)
 
 
-pet_list = list()
-populate_pet_list()
-server = Flask(__name__)
-server.config["JWT_SECRET_KEY"] = "my secret key"
-server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
-jwt = JWTManager(server)
-
-
-@server.route("/welcome")
-def welcome():
-    return "Welcome to the Pet web service"
+if __name__ == "__main__":
+    populate_pet_list()
+    server.config["JWT_SECRET_KEY"] = "my secret key"
+    server.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(minutes=5)
+    jwt = JWTManager(server)
+    server.run(host='0.0.0.0', debug=True)
 
 
 def user_valid(username, password):
     return username == "admin" and password == "hello123"
+
+
+def user_allowed(username):
+    return username == "admin"
+
+
+def pets_get():
+    return jsonify(pet_list), 200
+
+
+def pets_post():
+    if not request.data:
+        return jsonify({"error": "Pet data is missing"}), 404
+
+    pet_list.append(request.json)
+    result = {"message": "I received your pet data",
+              "pet": request.json}
+    return jsonify(result), 201
 
 
 @server.route('/')
@@ -49,24 +66,6 @@ def login():
 
     token = create_access_token(identity=username)
     return jsonify(bearer_token=token), 200
-
-
-def pets_post():
-    if not request.data:
-        return jsonify({"error": "Pet data is missing"}), 404
-
-    pet_list.append(request.json)
-    result = {"message": "I received your pet data",
-              "pet": request.json}
-    return jsonify(result), 201
-
-
-def pets_get():
-    return jsonify(pet_list), 200
-
-
-def user_allowed(username):
-    return username == "admin"
 
 
 @server.route("/pets", methods=['GET', 'POST'])
